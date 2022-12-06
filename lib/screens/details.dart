@@ -21,17 +21,19 @@ class Details extends StatelessWidget {
             ClipRRect(
                 child: Hero(
               tag: "image${movie.title}",
-              child: Image.network(
-                dotenv.env["IMAGE_URL"]! + movie.posterPath,
-                height: 360,
-                fit: BoxFit.cover,
-                alignment: Alignment.topCenter,
-              ),
+              child: movie.posterPath == null
+                  ? const Icon(Icons.movie)
+                  : Image.network(
+                      dotenv.env["IMAGE_URL"]! + movie.posterPath!,
+                      height: 360,
+                      fit: BoxFit.cover,
+                      alignment: Alignment.topCenter,
+                    ),
             )),
             const SizedBox(height: 30),
             ListTile(
                 title: Text(
-                  movie.title,
+                  movie.title == null ? "No Titile" : movie.title!,
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
@@ -60,7 +62,7 @@ class Details extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(18),
               child: Text(
-                movie.overview,
+                movie.overview!,
                 style: TextStyle(color: Colors.grey[600], height: 1.4),
               ),
             ),

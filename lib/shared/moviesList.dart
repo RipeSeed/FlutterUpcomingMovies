@@ -15,6 +15,8 @@ class MoviesList extends StatefulWidget {
 
 class _MoviesListState extends State<MoviesList> {
   List<Movies> movieList = [];
+  int page = 1;
+  bool loadingFlag = false;
   final GlobalKey _listKey = GlobalKey();
 
   @override
@@ -48,7 +50,7 @@ class _MoviesListState extends State<MoviesList> {
             ),
           ),
           Text(
-            movie.title,
+            movie.title == null ? "No Titile" : movie.title!,
             style: TextStyle(
               fontSize: 20,
               color: Colors.grey[600],
@@ -60,8 +62,13 @@ class _MoviesListState extends State<MoviesList> {
         borderRadius: BorderRadius.circular(8.0),
         child: Hero(
           tag: "image${movie.title}",
-          child: Image.network(dotenv.env["IMAGE_URL"]! + movie.posterPath,
-              height: 50.0, width: 50.0, scale: 1.5, fit: BoxFit.cover),
+          child: movie.posterPath == null
+              ? const Icon(
+                  Icons.movie,
+                  size: 50,
+                )
+              : Image.network(dotenv.env["IMAGE_URL"]! + movie.posterPath!,
+                  height: 50.0, width: 50.0, scale: 1.5, fit: BoxFit.cover),
         ),
       ),
       trailing: SizedBox(
@@ -82,19 +89,41 @@ class _MoviesListState extends State<MoviesList> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      key: _listKey,
-      itemCount: movieList.length,
-      itemBuilder: (context, index) {
-        return _buildTile(movieList[index]);
+    return NotificationListener<ScrollEndNotification>(
+      onNotification: (scrollEnd) {
+        final metrics = scrollEnd.metrics;
+        if (metrics.atEdge) {
+          bool isTop = metrics.pixels == 0;
+          if (isTop) {
+            print('At the top');
+          } else {
+            if (!loadingFlag) {
+              setState(() {
+                page++;
+                loadingFlag = true;
+              });
+              getMoviesData();
+            }
+            print('At the bottom');
+          }
+        }
+        return true;
       },
+      child: ListView.builder(
+        key: _listKey,
+        itemCount: movieList.length,
+        itemBuilder: (context, index) {
+          return _buildTile(movieList[index]);
+        },
+      ),
     );
   }
 
   void getMoviesData() async {
-    getListOfUpcomingMovies().then((value) {
+    getListOfUpcomingMovies(page).then((value) {
       setState(() {
-        movieList = value;
+        loadingFlag = false;
+        movieList.addAll(value);
       });
     });
   }

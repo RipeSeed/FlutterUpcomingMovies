@@ -4,8 +4,16 @@
 
 import 'dart:convert';
 
-List<Movies> MoviesFromJson(String str) =>
-    List<Movies>.from(json.decode(str).map((x) => Movies.fromJson(x)));
+List<Movies>? MoviesFromJson(String str) {
+  try {
+    return List<Movies>.from(
+      json.decode(str).map((x) => Movies.fromJson(x)),
+    );
+  } catch (e) {
+    print("Exception is ${e}");
+    return null;
+  }
+}
 
 String MoviesToJson(List<Movies> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
@@ -13,32 +21,32 @@ String MoviesToJson(List<Movies> data) =>
 class Movies {
   Movies({
     required this.adult,
-    required this.backdropPath,
+     this.backdropPath,
     required this.genreIds,
     required this.id,
-    required this.originalLanguage,
-    required this.originalTitle,
-    required this.overview,
+    this.originalLanguage,
+    this.originalTitle,
+    this.overview,
     required this.popularity,
-    required this.posterPath,
+     this.posterPath,
     required this.releaseDate,
-    required this.title,
+    this.title,
     required this.video,
     required this.voteAverage,
     required this.voteCount,
   });
 
   bool adult;
-  String backdropPath;
+  String? backdropPath;
   List<int> genreIds;
   int id;
-  String originalLanguage;
-  String originalTitle;
-  String overview;
+  String? originalLanguage;
+  String? originalTitle;
+  String? overview;
   double popularity;
-  String posterPath;
+  String? posterPath;
   DateTime releaseDate;
-  String title;
+  String? title;
   bool video;
   double voteAverage;
   int voteCount;
