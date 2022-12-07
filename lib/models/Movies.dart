@@ -2,6 +2,7 @@
 //
 //     final Movies = MoviesFromJson(jsonString);
 
+import 'dart:async';
 import 'dart:convert';
 
 List<Movies>? MoviesFromJson(String str) {
@@ -21,14 +22,14 @@ String MoviesToJson(List<Movies> data) =>
 class Movies {
   Movies({
     required this.adult,
-     this.backdropPath,
+    this.backdropPath,
     required this.genreIds,
     required this.id,
     this.originalLanguage,
     this.originalTitle,
     this.overview,
     required this.popularity,
-     this.posterPath,
+    this.posterPath,
     required this.releaseDate,
     this.title,
     required this.video,
