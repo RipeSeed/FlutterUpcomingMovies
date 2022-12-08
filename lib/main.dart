@@ -1,5 +1,6 @@
 import 'package:animation/bloc/movies_bloc.dart';
 import 'package:animation/screens/home.dart';
+import 'package:animation/screens/playGround.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -19,9 +20,9 @@ class MyApp extends StatelessWidget {
           create: ((context) => MoviesBloc()..add(GetFirstPage())),
         )
       ],
-      child: MaterialApp(
+      child: const MaterialApp(
         title: 'UpcomingMovies',
-        home: Home(),
+        home: MyPlayGround(),
       ),
     );
   }
