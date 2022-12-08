@@ -37,7 +37,7 @@ class MoviesListA extends MoviesState {
   final List<Movies> movies;
   final int page;
 
-  const MoviesListA(this.movies, this.page);
+  const MoviesListA(this.movies,this.page);
 
   @override
   List<Object> get props => [movies];

@@ -16,9 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: ((context) => MoviesBloc()..add(GetFirstPage())),
-        )
+        BlocProvider(create: ((context) => MoviesBloc())),
       ],
       child: const MaterialApp(
         title: 'UpcomingMovies',

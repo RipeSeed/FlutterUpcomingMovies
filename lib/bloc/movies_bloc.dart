@@ -2,7 +2,6 @@ import 'package:animation/api/getMoviesList.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
-
 import '../models/Movies.dart';
 
 part 'movies_event.dart';

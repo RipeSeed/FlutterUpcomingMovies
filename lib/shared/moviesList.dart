@@ -2,9 +2,12 @@ import 'package:animation/api/getMoviesList.dart';
 import 'package:animation/bloc/movies_bloc.dart';
 import 'package:animation/models/Movies.dart';
 import 'package:animation/screens/details.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:implicitly_animated_reorderable_list/implicitly_animated_reorderable_list.dart';
+import 'package:implicitly_animated_reorderable_list/transitions.dart';
 import 'package:intl/intl.dart';
 
 class MoviesList extends StatefulWidget {
@@ -19,11 +22,15 @@ class _MoviesListState extends State<MoviesList> {
   List<Movies> movieList = [];
   int page = 1;
   bool loadingFlag = false;
-  final GlobalKey _listKey = GlobalKey();
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<MoviesBloc>().add(GetFirstPage());
+    });
+
     //getMoviesData();
   }
 
@@ -89,40 +96,45 @@ class _MoviesListState extends State<MoviesList> {
     );
   }
 
+  final Tween<Offset> _offset =
+      Tween(begin: const Offset(1, 0), end: const Offset(0, 0));
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MoviesBloc, MoviesState>(
       builder: (context, state) {
         if (state is MoviesListA) {
-          return NotificationListener<ScrollEndNotification>(
-            onNotification: (scrollEnd) {
-              final metrics = scrollEnd.metrics;
-              if (metrics.atEdge) {
-                bool isTop = metrics.pixels == 0;
-                if (isTop) {
+        return NotificationListener<ScrollEndNotification>(
+          onNotification: (scrollEnd) {
+            final metrics = scrollEnd.metrics;
+            if (metrics.atEdge) {
+              bool isTop = metrics.pixels == 0;
+              if (isTop) {
+                if (kDebugMode) {
                   print('At the top');
-                } else {
-                  if (!loadingFlag) {
-                    context.read<MoviesBloc>().add(GetMoviesList());
-                    // setState(() {
-                    //   page++;
-                    //   loadingFlag = true;
-                    // });
-                    // getMoviesData();
-                  }
+                }
+              } else {
+                if (!loadingFlag) {
+                  context.read<MoviesBloc>().add(GetMoviesList());
+                }
+                if (kDebugMode) {
                   print('At the bottom');
                 }
               }
-              return true;
+            }
+            return true;
+          },
+          child: AnimatedList(
+            key: _listKey,
+            initialItemCount: (state).movies.length,
+            itemBuilder: (context, index, animation) {
+              return SlideTransition(
+                position: animation.drive(_offset),
+                child: _buildTile((state).movies[index]),
+              );
             },
-            child: ListView.builder(
-              key: _listKey,
-              itemCount: (state as MoviesListA).movies.length,
-              itemBuilder: (context, index) {
-                return _buildTile((state).movies[index]);
-              },
-            ),
-          );
+          ),
+        );
         } else {
           return const Center(child: Text("hello there"));
         }
