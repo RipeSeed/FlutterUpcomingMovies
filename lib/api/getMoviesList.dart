@@ -14,7 +14,7 @@ Future<List<Movies>> getListOfUpcomingMovies(int page) async {
   List<Movies> movies = [];
   if (response.statusCode == 200) {
     var result = json.decode(response.body);
-    print(result["results"]);
+    //print(result["results"]);
     List<dynamic> list = result["results"];
     for (var element in list) {
       Movies toAdd = Movies.fromJson(element);

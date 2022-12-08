@@ -1,7 +1,9 @@
 import 'package:animation/api/getMoviesList.dart';
+import 'package:animation/bloc/movies_bloc.dart';
 import 'package:animation/models/Movies.dart';
 import 'package:animation/screens/details.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 
@@ -22,7 +24,7 @@ class _MoviesListState extends State<MoviesList> {
   @override
   void initState() {
     super.initState();
-    getMoviesData();
+    //getMoviesData();
   }
 
   Widget _buildTile(Movies movie) {
@@ -89,42 +91,51 @@ class _MoviesListState extends State<MoviesList> {
 
   @override
   Widget build(BuildContext context) {
-    return NotificationListener<ScrollEndNotification>(
-      onNotification: (scrollEnd) {
-        final metrics = scrollEnd.metrics;
-        if (metrics.atEdge) {
-          bool isTop = metrics.pixels == 0;
-          if (isTop) {
-            print('At the top');
-          } else {
-            if (!loadingFlag) {
-              setState(() {
-                page++;
-                loadingFlag = true;
-              });
-              getMoviesData();
-            }
-            print('At the bottom');
-          }
+    return BlocBuilder<MoviesBloc, MoviesState>(
+      builder: (context, state) {
+        if (state is MoviesListA) {
+          return NotificationListener<ScrollEndNotification>(
+            onNotification: (scrollEnd) {
+              final metrics = scrollEnd.metrics;
+              if (metrics.atEdge) {
+                bool isTop = metrics.pixels == 0;
+                if (isTop) {
+                  print('At the top');
+                } else {
+                  if (!loadingFlag) {
+                    context.read<MoviesBloc>().add(GetMoviesList());
+                    // setState(() {
+                    //   page++;
+                    //   loadingFlag = true;
+                    // });
+                    // getMoviesData();
+                  }
+                  print('At the bottom');
+                }
+              }
+              return true;
+            },
+            child: ListView.builder(
+              key: _listKey,
+              itemCount: (state as MoviesListA).movies.length,
+              itemBuilder: (context, index) {
+                return _buildTile((state).movies[index]);
+              },
+            ),
+          );
+        } else {
+          return const Center(child: Text("hello there"));
         }
-        return true;
       },
-      child: ListView.builder(
-        key: _listKey,
-        itemCount: movieList.length,
-        itemBuilder: (context, index) {
-          return _buildTile(movieList[index]);
-        },
-      ),
     );
   }
 
-  void getMoviesData() async {
-    getListOfUpcomingMovies(page).then((value) {
-      setState(() {
-        loadingFlag = false;
-        movieList.addAll(value);
-      });
-    });
-  }
+  // void getMoviesData() async {
+  //   getListOfUpcomingMovies(page).then((value) {
+  //     setState(() {
+  //       loadingFlag = false;
+  //       movieList.addAll(value);
+  //     });
+  //   });
+  // }
 }
