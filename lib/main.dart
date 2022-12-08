@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       ],
       child: const MaterialApp(
         title: 'UpcomingMovies',
-        home: MyPlayGround(),
+        home: Home(),
       ),
     );
   }
