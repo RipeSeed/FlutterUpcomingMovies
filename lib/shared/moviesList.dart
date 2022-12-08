@@ -75,7 +75,7 @@ class _MoviesListState extends State<MoviesList> {
       ),
       trailing: SizedBox(
         height: 100,
-        width: 50,
+        width: 55,
         child: Row(
           children: [
             const Icon(
