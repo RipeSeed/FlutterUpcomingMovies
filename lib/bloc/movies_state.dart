@@ -38,17 +38,23 @@ class MoviesListA extends MoviesState {
   int page;
   MoviesListA(movies, this.page, this.listKey) {
     print("i called with ${movies.length}");
+    Future ft = Future(() {});
     for (var item in movies) {
-      this.movies.add(item);
-      if (listKey.currentState != null) {
-        listKey.currentState!.insertItem(this.movies.length - 1);
-      }
+      ft = ft.then(
+        (value) => Future.delayed(
+          const Duration(milliseconds: 100),
+          () {
+            this.movies.add(item);
+            listKey.currentState!.insertItem(this.movies.length - 1);
+          },
+        ),
+      );
     }
     print("lenth is ${this.movies.length}");
   }
 
   //add item to existing list
-  addItemToExistingList({required List<Movies> newMovies,required int page}) {
+  addItemToExistingList({required List<Movies> newMovies, required int page}) {
     for (var item in newMovies) {
       movies.add(item);
       listKey.currentState!.insertItem(movies.length - 1);

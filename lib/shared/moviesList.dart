@@ -106,32 +106,30 @@ class _MoviesListState extends State<MoviesList> {
               if (metrics.atEdge) {
                 bool isTop = metrics.pixels == 0;
                 if (isTop) {
-                  if (kDebugMode) {
-                    print('At the top');
-                  }
+                 
                 } else {
                   if (!loadingFlag) {
                     context
                         .read<MoviesBloc>()
                         .add(GetMoviesList(listKey: listKey));
                   }
-                  if (kDebugMode) {
-                    print('At the bottom');
-                  }
+                 
                 }
               }
               return true;
             },
-            child: AnimatedList(
-              key: listKey,
-              initialItemCount: (state).movies.length,
-              itemBuilder: (context, index, animation) {
-                print("movies length from UI ${(state).movies.length}");
-                return SlideTransition(
-                  position: animation.drive(_offset),
-                  child: _buildTile((state).movies[index]),
-                );
-              },
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: AnimatedList(
+                key: listKey,
+                initialItemCount: (state).movies.length,
+                itemBuilder: (context, index, animation) {
+                  return SlideTransition(
+                    position: animation.drive(_offset),
+                    child: _buildTile((state).movies[index]),
+                  );
+                },
+              ),
             ),
           );
         } else {
@@ -139,7 +137,6 @@ class _MoviesListState extends State<MoviesList> {
             key: listKey,
             initialItemCount: (state as MoviesInitial).movies.length,
             itemBuilder: (context, index, animation) {
-              print("movies length from UI ${(state).movies.length}");
               return SlideTransition(
                 position: animation.drive(_offset),
                 child: _buildTile((state).movies[index]),
