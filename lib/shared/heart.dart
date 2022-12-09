@@ -19,8 +19,8 @@ class _HeartState extends State<Heart> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _controller =
-        AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
+    _controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 800));
 
     _controller.addListener(() {
       if (kDebugMode) {
@@ -36,7 +36,7 @@ class _HeartState extends State<Heart> with SingleTickerProviderStateMixin {
           });
         } else {
           setState(() {
-            favourite = true;
+            favourite = false;
           });
         }
       }

@@ -7,8 +7,6 @@ abstract class MoviesState extends Equatable {
   List<Object> get props => [];
 }
 
-class LoadingMovies extends MoviesState {}
-
 class MoviesPage extends MoviesState {
   final int page;
 
@@ -27,18 +25,37 @@ class MoviesTotalPages extends MoviesState {
 }
 
 class MoviesInitial extends MoviesState {
-  //final List<Movies> movies;
-  //const MoviesInitial(this.movies);
-  //@override
-  //List<Object> get props => [movies];
-}
-
-class MoviesListA extends MoviesState {
-  final List<Movies> movies;
-  final int page;
-
-  const MoviesListA(this.movies,this.page);
+  final List<Movies> movies = [];
+  MoviesInitial();
 
   @override
   List<Object> get props => [movies];
+}
+
+class MoviesListA extends MoviesState {
+  final GlobalKey<AnimatedListState> listKey;
+  List<Movies> movies = [];
+  int page;
+  MoviesListA(movies, this.page, this.listKey) {
+    print("i called with ${movies.length}");
+    for (var item in movies) {
+      this.movies.add(item);
+      if (listKey.currentState != null) {
+        listKey.currentState!.insertItem(this.movies.length - 1);
+      }
+    }
+    print("lenth is ${this.movies.length}");
+  }
+
+  //add item to existing list
+  addItemToExistingList({required List<Movies> newMovies,required int page}) {
+    for (var item in newMovies) {
+      movies.add(item);
+      listKey.currentState!.insertItem(movies.length - 1);
+    }
+    this.page = page;
+  }
+
+  @override
+  List<Object> get props => [movies, page];
 }

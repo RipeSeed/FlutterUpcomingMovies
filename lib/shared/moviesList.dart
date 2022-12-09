@@ -19,18 +19,19 @@ class _MoviesListState extends State<MoviesList> {
   List<Movies> movieList = [];
   int page = 1;
   bool loadingFlag = false;
-  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
+  final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<MoviesBloc>().add(GetFirstPage());
+      context.read<MoviesBloc>().add(GetFirstPage(listKey: listKey));
     });
   }
 
   Widget _buildTile(Movies movie) {
     return ListTile(
+      key: Key(movie.title!),
       onTap: () {
         Navigator.push(
           context,
@@ -92,7 +93,7 @@ class _MoviesListState extends State<MoviesList> {
   }
 
   final Tween<Offset> _offset =
-      Tween(begin: const Offset(1, 0), end: const Offset(0, 0));
+      Tween(begin: const Offset(2, 0), end: const Offset(0, 0));
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +111,9 @@ class _MoviesListState extends State<MoviesList> {
                   }
                 } else {
                   if (!loadingFlag) {
-                    context.read<MoviesBloc>().add(GetMoviesList());
+                    context
+                        .read<MoviesBloc>()
+                        .add(GetMoviesList(listKey: listKey));
                   }
                   if (kDebugMode) {
                     print('At the bottom');
@@ -119,16 +122,30 @@ class _MoviesListState extends State<MoviesList> {
               }
               return true;
             },
-            child: ListView.builder(
-              key: _listKey,
-              itemCount: (state).movies.length,
-              itemBuilder: (context, index) {
-                return _buildTile((state).movies[index]);
+            child: AnimatedList(
+              key: listKey,
+              initialItemCount: (state).movies.length,
+              itemBuilder: (context, index, animation) {
+                print("movies length from UI ${(state).movies.length}");
+                return SlideTransition(
+                  position: animation.drive(_offset),
+                  child: _buildTile((state).movies[index]),
+                );
               },
             ),
           );
         } else {
-          return const Center(child: Text("hello there"));
+          return AnimatedList(
+            key: listKey,
+            initialItemCount: (state as MoviesInitial).movies.length,
+            itemBuilder: (context, index, animation) {
+              print("movies length from UI ${(state).movies.length}");
+              return SlideTransition(
+                position: animation.drive(_offset),
+                child: _buildTile((state).movies[index]),
+              );
+            },
+          );
         }
       },
     );

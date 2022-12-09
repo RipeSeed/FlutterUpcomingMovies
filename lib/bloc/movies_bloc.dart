@@ -2,6 +2,7 @@ import 'package:animation/api/getMoviesList.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import '../models/Movies.dart';
 
 part 'movies_event.dart';
@@ -9,11 +10,10 @@ part 'movies_state.dart';
 
 class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
   MoviesBloc() : super(MoviesInitial()) {
-    // ignore: void_checks
     on<GetFirstPage>((event, emit) async {
-      emit(LoadingMovies());
+      //event.listKey.currentState!.insertItem(0);
       await getListOfUpcomingMovies(1).then((value) async {
-        emit(MoviesListA(value, 2));
+        emit(MoviesListA(value, 2, event.listKey));
       });
     });
     on<GetMoviesList>((event, emit) async {
@@ -24,12 +24,9 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
       if (kDebugMode) {
         print(state.page);
       }
+      List<Movies> m = List.from(state.movies);
       await getListOfUpcomingMovies(state.page).then((value) {
-        if (kDebugMode) {
-          print("i was here ");
-        }
-        emit(MoviesListA(
-            List.from(state.movies)..addAll(value), state.page + 1));
+        state.addItemToExistingList(newMovies: value, page: state.page + 1);
       });
     });
   }

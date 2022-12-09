@@ -7,7 +7,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 Future<List<Movies>> getListOfUpcomingMovies(int page) async {
-  //final listKey = GlobalKey<AnimatedListState>();
+  final listKey = GlobalKey<AnimatedListState>();
   var url =
       "${dotenv.env["API_URL"]}3/movie/upcoming?api_key=${dotenv.env["API_KEY"]}&&page=$page";
   final uu = Uri.parse(url);
